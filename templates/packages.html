@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Tour Packages | Search, Filter & Book | Tourly{% endblock %}
+
+{% block content %}
+<section class="py-4 text-white" style="background-color: #0A2540;">
+    <div class="container">
+        <h1 class="fw-bold mb-1">All-Inclusive Tour Packages</h1>
+        <p class="text-info mb-0">Filter by destination, category, or budget and sort by price dynamically using jQuery AJAX.</p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <!-- Multi-Criteria Filter & Sort Bar -->
+        <div class="card border-0 shadow-sm p-4 mb-4">
+            <form id="ajaxPackageFilterForm" method="get" action="{% url 'packages' %}" class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold">Search Package</label>
+                    <input type="text" name="q" value="{{ search_query }}" class="form-control" placeholder="Keyword or activity...">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold">Destination</label>
+                    <select name="destination" class="form-select">
+                        <option value="">All Destinations</option>
+                        {% for d in destinations %}
+                        <option value="{{ d.id }}" {% if selected_destination == d.id|stringformat:"s" %}selected{% endif %}>{{ d.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold">Category</label>
+                    <select name="category" class="form-select">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold">Max Budget (&#8377;)</label>
+                    <select name="max_budget" class="form-select">
+                        <option value="">No Limit</option>
+                        <option value="15000" {% if max_budget == '15000' %}selected{% endif %}>Under &#8377;15,000</option>
+                        <option value="25000" {% if max_budget == '25000' %}selected{% endif %}>Under &#8377;25,000</option>
+                        <option value="40000" {% if max_budget == '40000' %}selected{% endif %}>Under &#8377;40,000</option>
+                        <option value="60000" {% if max_budget == '60000' %}selected{% endif %}>Under &#8377;60,000</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold">Sort By Price</label>
+                    <select name="sort" class="form-select">
+                        <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                        <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                        <option value="name_asc" {% if sort_by == 'name_asc' %}selected{% endif %}>Name: A to Z</option>
+                    </select>
+                </div>
+                <div class="col-md-1 d-grid">
+                    <button type="submit" class="btn btn-tourly-navy">Go</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="mb-3 text-muted small">
+            Displaying <strong id="packageResultCount">{{ packages|length }}</strong> curated tour package(s)
+        </div>
+
+        <!-- Tour Packages Grid -->
+        <div class="row g-4" id="ajaxPackagesGrid">
+            {% for pkg in packages %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card tourly-card">
+                    <div class="card-img-wrapper">
+                        <img src="{{ pkg.image }}" class="card-img-top" alt="{{ pkg.package_name }}">
+                        <span class="category-badge">{{ pkg.destination.category }}</span>
+                        <span class="price-badge">&#8377;{{ pkg.price|floatformat:0 }}</span>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="small text-info fw-semibold mb-1">{{ pkg.destination.name }} &bull; {{ pkg.duration }}</div>
+                        <h5 class="card-title fw-bold" style="color: #0A2540;">{{ pkg.package_name }}</h5>
+                        <p class="card-text text-muted small flex-grow-1">{{ pkg.description }}</p>
+                        <div class="small text-secondary mb-3">
+                            <strong>Hotel:</strong> {{ pkg.hotel_info }}
+                        </div>
+                        <div class="d-flex gap-2 mt-auto">
+                            <button type="button" class="btn btn-outline-dark btn-sm flex-grow-1 ajax-quick-view-btn" data-pkg-id="{{ pkg.id }}">
+                                Quick View
+                            </button>
+                            <a href="{% url 'package_details' pkg.id %}" class="btn btn-tourly-turquoise btn-sm flex-grow-1">Details</a>
+                            <a href="{% url 'booking' pkg.id %}" class="btn btn-tourly-orange btn-sm flex-grow-1">Book Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-light border text-center py-5">
+                    <h5>No tour packages matched your filter criteria.</h5>
+                    <a href="{% url 'packages' %}" class="btn btn-tourly-orange btn-sm mt-2">Reset All Filters</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

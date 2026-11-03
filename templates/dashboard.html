@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}My Customer Dashboard | Tourly{% endblock %}
+
+{% block content %}
+<section class="py-4 text-white" style="background-color: #0A2540;">
+    <div class="container d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+        <div>
+            <span class="badge bg-info text-dark mb-1">Authenticated Customer Session</span>
+            <h1 class="fw-bold mb-0">Welcome, {{ customer.name }}</h1>
+        </div>
+        <div class="mt-3 mt-md-0 d-flex gap-2">
+            <a href="{% url 'packages' %}" class="btn btn-tourly-orange btn-sm">+ Book New Trip</a>
+            <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">Logout</a>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Customer Profile Card -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm p-4 mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="feature-icon-circle me-3"><i class="bi bi-person-badge"></i></div>
+                        <div>
+                            <h5 class="fw-bold mb-0" style="color: #0A2540;">{{ customer.name }}</h5>
+                            <small class="text-muted">Member since {{ customer.created_at|date:"M Y" }}</small>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="small mb-2"><strong>Email:</strong> {{ customer.email }}</div>
+                    <div class="small mb-2"><strong>Phone:</strong> {{ customer.phone }}</div>
+                    <div class="small mb-0"><strong>Account Type:</strong> {% if customer.is_admin %}Administrator{% else %}Verified Traveler{% endif %}</div>
+                </div>
+
+                <!-- Summary Counters -->
+                <div class="row g-3">
+                    <div class="col-4">
+                        <div class="card border-0 shadow-sm p-3 text-center">
+                            <div class="fs-4 fw-bold" style="color: #0A2540;">{{ total_bookings_count }}</div>
+                            <div class="small text-muted">Total Trips</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card border-0 shadow-sm p-3 text-center">
+                            <div class="fs-4 fw-bold text-success">{{ confirmed_count }}</div>
+                            <div class="small text-muted">Confirmed</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card border-0 shadow-sm p-3 text-center">
+                            <div class="fs-4 fw-bold text-warning">{{ pending_count }}</div>
+                            <div class="small text-muted">Pending</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bookings & Upcoming Trips Table -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm p-4 mb-4">
+                    <h4 class="fw-bold mb-3" style="color: #0A2540;">My Bookings &amp; Upcoming Trips</h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light small">
+                                <tr>
+                                    <th>Booking ID</th>
+                                    <th>Tour Package &amp; Destination</th>
+                                    <th>Travel Date</th>
+                                    <th>Travelers</th>
+                                    <th>Total Price</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for b in bookings %}
+                                <tr>
+                                    <td><strong>#{{ b.id }}</strong></td>
+                                    <td>
+                                        <div class="fw-bold" style="color: #0A2540;">{{ b.package.package_name }}</div>
+                                        <small class="text-muted">{{ b.package.destination.name }} &bull; {{ b.package.duration }}</small>
+                                    </td>
+                                    <td>{{ b.travel_date|date:"d M Y" }}</td>
+                                    <td>{{ b.travelers }}</td>
+                                    <td class="fw-bold">&#8377;{{ b.total_price|floatformat:0 }}</td>
+                                    <td>
+                                        <span class="badge badge-status-{{ b.booking_status }} px-2 py-1">{{ b.booking_status }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button type="button" class="btn btn-outline-info btn-sm ajax-view-booking-btn" data-booking-id="{{ b.id }}">
+                                                Details
+                                            </button>
+                                            {% if b.booking_status == 'Pending' or b.booking_status == 'Confirmed' %}
+                                            <form method="post" action="{% url 'cancel_booking' b.id %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">Cancel</button>
+                                            </form>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center py-4 text-muted">
+                                        You haven't booked any tour packages yet. <a href="{% url 'packages' %}">Explore Tour Packages</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Booking Detail Modal (Populated via jQuery AJAX) -->
+<div class="modal fade" id="bookingDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header text-white" style="background-color: #0A2540;">
+                <h5 class="modal-title">Booking Summary <span id="modalBookingId"></span></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 small">
+                <div class="mb-2"><strong>Customer:</strong> <span id="modalBookingCustomer"></span></div>
+                <div class="mb-2"><strong>Package:</strong> <span id="modalBookingPackage"></span></div>
+                <div class="mb-2"><strong>Travel Date &amp; Duration:</strong> <span id="modalBookingDate"></span></div>
+                <div class="mb-2"><strong>Travelers:</strong> <span id="modalBookingTravelers"></span></div>
+                <div class="mb-2"><strong>Total Cost:</strong> <span id="modalBookingTotal" class="fw-bold text-danger"></span></div>
+                <div class="mb-2"><strong>Special Requirements:</strong> <span id="modalBookingRequirements"></span></div>
+                <div><strong>Status:</strong> <span id="modalBookingStatus" class="badge bg-info text-dark"></span></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

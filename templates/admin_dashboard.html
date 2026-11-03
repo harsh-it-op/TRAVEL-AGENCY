@@ -1,0 +1,435 @@
+{% extends 'base.html' %}
+
+{% block title %}Administrator Dashboard | Tourly Management System{% endblock %}
+
+{% block content %}
+<section class="py-4 text-white" style="background-color: #0A2540;">
+    <div class="container d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+        <div>
+            <span class="badge bg-warning text-dark mb-1">Administrator Control Panel</span>
+            <h1 class="fw-bold mb-0">Tourly Agency Management Dashboard</h1>
+        </div>
+        <div class="mt-3 mt-md-0 d-flex gap-2">
+            <button class="btn btn-tourly-turquoise btn-sm" data-bs-toggle="modal" data-bs-target="#addDestinationModal">
+                + Add Destination
+            </button>
+            <button class="btn btn-tourly-orange btn-sm" data-bs-toggle="modal" data-bs-target="#addPackageModal">
+                + Add Tour Package
+            </button>
+            <a href="/django-admin/" class="btn btn-outline-light btn-sm">Django Admin</a>
+        </div>
+    </div>
+</section>
+
+<section class="py-4">
+    <div class="container">
+        <!-- 1. DASHBOARD OVERVIEW METRIC CARDS (6 Required Metrics) -->
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="card border-0 shadow-sm p-3 text-center h-100">
+                    <div class="small text-muted">Registered Users</div>
+                    <div class="fs-3 fw-bolder" style="color: #0A2540;">{{ total_users }}</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="card border-0 shadow-sm p-3 text-center h-100">
+                    <div class="small text-muted">Total Destinations</div>
+                    <div class="fs-3 fw-bolder text-info">{{ total_destinations }}</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="card border-0 shadow-sm p-3 text-center h-100">
+                    <div class="small text-muted">Tour Packages</div>
+                    <div class="fs-3 fw-bolder text-primary">{{ total_packages }}</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="card border-0 shadow-sm p-3 text-center h-100">
+                    <div class="small text-muted">Total Bookings</div>
+                    <div class="fs-3 fw-bolder" style="color: #FF6B35;">{{ total_bookings }}</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="card border-0 shadow-sm p-3 text-center h-100">
+                    <div class="small text-muted">Pending Bookings</div>
+                    <div class="fs-3 fw-bolder text-warning">{{ pending_bookings }}</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="card border-0 shadow-sm p-3 text-center h-100">
+                    <div class="small text-muted">Confirmed Bookings</div>
+                    <div class="fs-3 fw-bolder text-success">{{ confirmed_bookings }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap Nav Tabs for Admin Modules -->
+        <ul class="nav nav-tabs mb-4" id="adminTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active fw-bold" id="bookings-tab" data-bs-toggle="tab" data-bs-target="#tabBookings" type="button" role="tab">
+                    Booking Management ({{ total_bookings }})
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold" id="destinations-tab" data-bs-toggle="tab" data-bs-target="#tabDestinations" type="button" role="tab">
+                    Destinations ({{ total_destinations }})
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold" id="packages-tab" data-bs-toggle="tab" data-bs-target="#tabPackages" type="button" role="tab">
+                    Tour Packages ({{ total_packages }})
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold" id="users-tab" data-bs-toggle="tab" data-bs-target="#tabUsers" type="button" role="tab">
+                    Registered Users ({{ total_users }})
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold" id="messages-tab" data-bs-toggle="tab" data-bs-target="#tabMessages" type="button" role="tab">
+                    Contact Messages ({{ contact_messages|length }})
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="adminTabContent">
+            <!-- TAB 1: BOOKING MANAGEMENT (With jQuery AJAX Live Status Update) -->
+            <div class="tab-pane fade show active" id="tabBookings" role="tabpanel">
+                <div class="card border-0 shadow-sm p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0" style="color: #0A2540;">Customer Bookings (AJAX Dynamic Status Update)</h5>
+                        <span class="badge bg-info text-dark">Select status dropdown to update MySQL via jQuery AJAX</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle small">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Customer</th>
+                                    <th>Tour Package</th>
+                                    <th>Travel Date</th>
+                                    <th>Pax</th>
+                                    <th>Total Price</th>
+                                    <th>Current Status</th>
+                                    <th>Update Status (AJAX)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for b in bookings %}
+                                <tr>
+                                    <td><strong>#{{ b.id }}</strong></td>
+                                    <td>
+                                        <div class="fw-bold">{{ b.customer_name }}</div>
+                                        <div class="text-muted">{{ b.customer_email }} | {{ b.customer_phone }}</div>
+                                    </td>
+                                    <td>{{ b.package.package_name }} ({{ b.package.destination.name }})</td>
+                                    <td>{{ b.travel_date|date:"d M Y" }}</td>
+                                    <td>{{ b.travelers }}</td>
+                                    <td class="fw-bold">&#8377;{{ b.total_price|floatformat:0 }}</td>
+                                    <td>
+                                        <span id="statusBadge_{{ b.id }}" class="badge badge-status-{{ b.booking_status }} px-2 py-1">
+                                            {{ b.booking_status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <select class="form-select form-select-sm ajax-admin-status-select" data-booking-id="{{ b.id }}">
+                                            <option value="Pending" {% if b.booking_status == 'Pending' %}selected{% endif %}>Pending</option>
+                                            <option value="Confirmed" {% if b.booking_status == 'Confirmed' %}selected{% endif %}>Confirmed</option>
+                                            <option value="Cancelled" {% if b.booking_status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                                            <option value="Completed" {% if b.booking_status == 'Completed' %}selected{% endif %}>Completed</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: DESTINATION MANAGEMENT -->
+            <div class="tab-pane fade" id="tabDestinations" role="tabpanel">
+                <div class="card border-0 shadow-sm p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0" style="color: #0A2540;">Manage Destinations</h5>
+                        <button class="btn btn-tourly-turquoise btn-sm" data-bs-toggle="modal" data-bs-target="#addDestinationModal">
+                            + Add New Destination
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle small">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Destination</th>
+                                    <th>Country</th>
+                                    <th>Category</th>
+                                    <th>Attractions</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for d in destinations %}
+                                <tr>
+                                    <td>{{ d.id }}</td>
+                                    <td class="fw-bold">{{ d.name }}</td>
+                                    <td>{{ d.country }}</td>
+                                    <td><span class="badge bg-info text-dark">{{ d.category }}</span></td>
+                                    <td>{{ d.attractions|truncatechars:65 }}</td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <a href="{% url 'destination_detail' d.id %}" class="btn btn-outline-primary btn-sm">View</a>
+                                            <form method="post" action="{% url 'admin_delete_destination' d.id %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: TOUR PACKAGE MANAGEMENT -->
+            <div class="tab-pane fade" id="tabPackages" role="tabpanel">
+                <div class="card border-0 shadow-sm p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0" style="color: #0A2540;">Manage Tour Packages</h5>
+                        <button class="btn btn-tourly-orange btn-sm" data-bs-toggle="modal" data-bs-target="#addPackageModal">
+                            + Add New Package
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle small">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Package Name</th>
+                                    <th>Destination</th>
+                                    <th>Duration</th>
+                                    <th>Price</th>
+                                    <th>Hotel</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in packages %}
+                                <tr>
+                                    <td>{{ p.id }}</td>
+                                    <td class="fw-bold">{{ p.package_name }}</td>
+                                    <td>{{ p.destination.name }}</td>
+                                    <td>{{ p.duration }}</td>
+                                    <td class="fw-bold text-danger">&#8377;{{ p.price|floatformat:0 }}</td>
+                                    <td>{{ p.hotel_info|truncatechars:40 }}</td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <a href="{% url 'package_details' p.id %}" class="btn btn-outline-primary btn-sm">View</a>
+                                            <form method="post" action="{% url 'admin_delete_package' p.id %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: USER MANAGEMENT -->
+            <div class="tab-pane fade" id="tabUsers" role="tabpanel">
+                <div class="card border-0 shadow-sm p-4">
+                    <h5 class="fw-bold mb-3" style="color: #0A2540;">Registered Customers &amp; Administrators</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle small">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Full Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Role</th>
+                                    <th>Joined Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for u in users %}
+                                <tr>
+                                    <td>{{ u.id }}</td>
+                                    <td class="fw-bold">{{ u.name }}</td>
+                                    <td>{{ u.email }}</td>
+                                    <td>{{ u.phone }}</td>
+                                    <td>
+                                        {% if u.is_admin %}
+                                        <span class="badge bg-warning text-dark">Administrator</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Customer</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ u.created_at|date:"d M Y, H:i" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: CONTACT MESSAGES -->
+            <div class="tab-pane fade" id="tabMessages" role="tabpanel">
+                <div class="card border-0 shadow-sm p-4">
+                    <h5 class="fw-bold mb-3" style="color: #0A2540;">Customer Contact Inquiries</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle small">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Sender</th>
+                                    <th>Subject</th>
+                                    <th>Message</th>
+                                    <th>Received</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for m in contact_messages %}
+                                <tr>
+                                    <td>#{{ m.id }}</td>
+                                    <td>
+                                        <div class="fw-bold">{{ m.name }}</div>
+                                        <div class="text-muted">{{ m.email }} | {{ m.phone }}</div>
+                                    </td>
+                                    <td class="fw-semibold">{{ m.subject }}</td>
+                                    <td>{{ m.message }}</td>
+                                    <td>{{ m.created_at|date:"d M Y" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal: Add/Edit Destination -->
+<div class="modal fade" id="addDestinationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{% url 'admin_save_destination' %}">
+                {% csrf_token %}
+                <div class="modal-header text-white" style="background-color: #0A2540;">
+                    <h5 class="modal-title">Add / Update Destination</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body small">
+                    <div class="mb-2">
+                        <label class="form-label fw-bold">Destination Name *</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col-6">
+                            <label class="form-label fw-bold">Country *</label>
+                            <input type="text" name="country" value="India" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-bold">Category *</label>
+                            <select name="category" class="form-select" required>
+                                {% for cat in categories %}
+                                <option value="{{ cat }}">{{ cat }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label fw-bold">Image Path *</label>
+                        <input type="text" name="image" value="/static/images/manali.svg" class="form-control" required>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label fw-bold">Popular Attractions (comma-separated) *</label>
+                        <input type="text" name="attractions" class="form-control" placeholder="Solang Valley, Rohtang Pass..." required>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label fw-bold">Description *</label>
+                        <textarea name="description" rows="3" class="form-control" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-tourly-turquoise">Save Destination</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Add/Edit Tour Package -->
+<div class="modal fade" id="addPackageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="post" action="{% url 'admin_save_package' %}">
+                {% csrf_token %}
+                <div class="modal-header text-white" style="background-color: #0A2540;">
+                    <h5 class="modal-title">Add / Update Tour Package</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body small">
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Package Name *</label>
+                            <input type="text" name="package_name" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Destination *</label>
+                            <select name="destination" class="form-select" required>
+                                {% for d in destinations %}
+                                <option value="{{ d.id }}">{{ d.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Duration *</label>
+                            <input type="text" name="duration" value="5 Days / 4 Nights" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Price (&#8377;) *</label>
+                            <input type="number" step="0.01" name="price" value="19500" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Image Path *</label>
+                            <input type="text" name="image" value="/static/images/manali.svg" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Hotel Information *</label>
+                            <input type="text" name="hotel_info" value="4-Star Deluxe Resort with Breakfast & Dinner" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Availability *</label>
+                            <input type="text" name="availability" value="Available Daily (Nov 2026 - Jun 2027)" class="form-control" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Activities (comma-separated) *</label>
+                            <input type="text" name="activities" value="Guided Sightseeing, Cultural Dinner, Adventure Excursion" class="form-control" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Day-Wise Itinerary (pipe `|` separated) *</label>
+                            <textarea name="itinerary" rows="2" class="form-control" required>Day 1: Arrival & Check-in | Day 2: Full-Day Guided Sightseeing | Day 3: Adventure Excursion | Day 4: Departure</textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Package Description *</label>
+                            <textarea name="description" rows="2" class="form-control" required></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-tourly-orange">Save Tour Package</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

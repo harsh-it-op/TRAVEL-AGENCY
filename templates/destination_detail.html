@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ destination.name }} Travel Guide & Packages | Tourly{% endblock %}
+
+{% block content %}
+<section class="py-5 text-white" style="background: linear-gradient(135deg, #0A2540 0%, #133B63 100%);">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb small">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-info text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'destinations' %}" class="text-info text-decoration-none">Destinations</a></li>
+                <li class="breadcrumb-item active text-light" aria-current="page">{{ destination.name }}</li>
+            </ol>
+        </nav>
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+                <span class="badge bg-info text-dark mb-2">{{ destination.category }}</span>
+                <h1 class="display-5 fw-bold mb-2">{{ destination.name }}, {{ destination.country }}</h1>
+                <p class="lead opacity-90 mb-3">{{ destination.description }}</p>
+                <h6 class="text-info fw-bold text-uppercase small">Top Attractions in {{ destination.name }}:</h6>
+                <div class="d-flex flex-wrap gap-2 mt-2">
+                    {% for attr in destination.attractions_list %}
+                    <span class="badge bg-light text-dark px-3 py-2"><i class="bi bi-pin-map-fill text-danger me-1"></i>{{ attr }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <img id="galleryMainImage" src="{{ destination.image }}" class="img-fluid rounded-4 shadow-lg border border-secondary" alt="{{ destination.name }}">
+                <div class="d-flex justify-content-between align-items-center mt-2 small text-light">
+                    <span id="galleryMainCaption">{{ destination.name }} – Official Destination View</span>
+                    <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-info" onclick="switchGalleryImage('{{ destination.image }}', '{{ destination.name }} – Scenic Panorama')">Panorama</button>
+                        <button type="button" class="btn btn-outline-info" onclick="switchGalleryImage('/static/images/hero_banner.svg', '{{ destination.name }} – Expedition Trail')">Expedition View</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <h3 class="fw-bold mb-4" style="color: #0A2540;">Available Tour Packages in {{ destination.name }} ({{ packages|length }})</h3>
+        <div class="row g-4">
+            {% for pkg in packages %}
+            <div class="col-md-6">
+                <div class="card tourly-card">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <span class="badge bg-info text-dark mb-1">{{ pkg.duration }}</span>
+                                <h4 class="fw-bold mb-1" style="color: #0A2540;">{{ pkg.package_name }}</h4>
+                            </div>
+                            <div class="text-end">
+                                <span class="fs-4 fw-bolder text-danger">&#8377;{{ pkg.price|floatformat:0 }}</span>
+                                <div class="small text-muted">per person</div>
+                            </div>
+                        </div>
+                        <p class="text-muted small mb-3">{{ pkg.description }}</p>
+                        <div class="p-3 bg-light rounded mb-3 small">
+                            <div><strong><i class="bi bi-building me-1"></i>Hotel:</strong> {{ pkg.hotel_info }}</div>
+                            <div class="mt-1"><strong><i class="bi bi-calendar-event me-1"></i>Availability:</strong> {{ pkg.availability }}</div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'package_details' pkg.id %}" class="btn btn-tourly-navy flex-grow-1">Full Itinerary</a>
+                            <a href="{% url 'booking' pkg.id %}" class="btn btn-tourly-orange flex-grow-1">Book This Package</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">No packages currently listed for this destination.</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

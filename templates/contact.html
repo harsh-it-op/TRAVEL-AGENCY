@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us | Tourly Travel Agency{% endblock %}
+
+{% block content %}
+<section class="py-4 text-white" style="background-color: #0A2540;">
+    <div class="container">
+        <h1 class="fw-bold mb-1">Contact Tourly Travel Experts</h1>
+        <p class="text-info mb-0">Submit your inquiry via standard Django POST or asynchronously using jQuery AJAX.</p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Contact Form -->
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm p-4 p-md-5">
+                    <h4 class="fw-bold mb-3" style="color: #0A2540;">Send Us a Message</h4>
+
+                    <div id="ajaxContactResponse" class="alert d-none"></div>
+
+                    <form id="contactUsForm" method="post" action="{% url 'contact' %}">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Your Name *</label>
+                                <input type="text" name="name" value="{{ form.name.value|default:'' }}" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Email Address *</label>
+                                <input type="email" name="email" value="{{ form.email.value|default:'' }}" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Phone Number *</label>
+                                <input type="text" name="phone" value="{{ form.phone.value|default:'' }}" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Subject *</label>
+                                <input type="text" name="subject" value="{{ form.subject.value|default:'' }}" class="form-control" placeholder="Custom Tour Quotation / Visa Inquiry" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold">Message (min 10 characters) *</label>
+                                <textarea name="message" rows="4" class="form-control" required>{{ form.message.value|default:'' }}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 mt-4">
+                            <button type="submit" class="btn btn-tourly-navy px-4">
+                                Submit via Django POST
+                            </button>
+                            <button type="button" id="ajaxContactSubmitBtn" class="btn btn-tourly-orange px-4">
+                                <i class="bi bi-lightning-charge-fill me-1"></i>Submit Asynchronously (jQuery AJAX)
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Agency Contact Details & Location -->
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm p-4 mb-4">
+                    <h5 class="fw-bold mb-3" style="color: #0A2540;">Agency Headquarters &amp; Branches</h5>
+                    <p class="small text-muted">Visit our Jaipur flagship travel lounge or reach our 24/7 booking desk.</p>
+                    <ul class="list-unstyled small mb-0">
+                        <li class="mb-3">
+                            <strong><i class="bi bi-geo-alt-fill text-danger me-2"></i>Head Office:</strong><br>
+                            Tourly Plaza, MI Road, Panch Batti, Jaipur, Rajasthan 302001, India
+                        </li>
+                        <li class="mb-3">
+                            <strong><i class="bi bi-telephone-fill text-info me-2"></i>Reservation Desk:</strong><br>
+                            +91-141-2800-990 / +91-98765-43210
+                        </li>
+                        <li class="mb-3">
+                            <strong><i class="bi bi-envelope-fill text-warning me-2"></i>Email Support:</strong><br>
+                            bookings@tourly.com &bull; corporate@tourly.com
+                        </li>
+                        <li>
+                            <strong><i class="bi bi-clock-fill text-success me-2"></i>Working Hours:</strong><br>
+                            Monday – Saturday: 09:00 AM to 08:00 PM IST
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card border-0 shadow-sm p-4 text-white" style="background: linear-gradient(135deg, #0A2540 0%, #133B63 100%);">
+                    <h6 class="fw-bold text-info">Python CGI &amp; Node.js Academic Demos</h6>
+                    <p class="small mb-2">
+                        In addition to this Django MVT application, standalone syllabus demonstrations are included in:
+                    </p>
+                    <ul class="small mb-0">
+                        <li><code>cgi/cgi_get.py</code> – HTTP GET query parser</li>
+                        <li><code>cgi/cgi_post.py</code> – HTTP POST quotation handler</li>
+                        <li><code>node/node_server.js</code> – Node.js JSON status &amp; advisory server</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

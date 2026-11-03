@@ -1,0 +1,595 @@
+/* ==========================================================================
+   TOURLY – EXTERNAL STYLESHEET (static/css/style.css)
+   Matches the uploaded codewithsadee Tourly reference screenshots & index.html
+   while supporting all Bootstrap 5, Django MVT, jQuery AJAX & AngularJS views.
+   ========================================================================== */
+
+:root {
+    --bright-navy-blue: #3B79C9;
+    --bright-navy-blue-hover: #2E65AE;
+    --united-nations-blue: #528BE0;
+    --yale-blue: #1D4E89;
+    --oxford-blue: #1E2C3A;
+    --gunmetal: #223544;
+    --Spanish-gray: #8E9AA0;
+    --black-coral: #5D6A72;
+    --cultured: #F6F8FA;
+    --white: #FFFFFF;
+    --ff-poppins: 'Poppins', sans-serif;
+    --ff-montserrat: 'Montserrat', sans-serif;
+    --radius-15: 15px;
+    --radius-25: 25px;
+    --transition: 0.25s ease-in-out;
+}
+
+body {
+    font-family: var(--ff-poppins);
+    color: var(--black-coral);
+    background-color: var(--white);
+    overflow-x: hidden;
+    margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .section-title, .hero-title {
+    font-family: var(--ff-montserrat);
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--oxford-blue);
+    letter-spacing: -0.3px;
+}
+
+/* --- TWO-TIER HEADER & NAVBAR --- */
+.tourly-header-wrapper {
+    background: linear-gradient(180deg, rgba(16, 28, 42, 0.94) 0%, rgba(28, 44, 62, 0.88) 100%);
+    color: var(--white);
+    position: sticky;
+    top: 0;
+    z-index: 1040;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
+}
+
+.header-top-bar {
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.helpline-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--white);
+}
+
+.helpline-box .icon-circle {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: var(--bright-navy-blue);
+    color: var(--white);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+}
+
+.helpline-box .helpline-title {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.78);
+    margin: 0;
+}
+
+.helpline-box .helpline-number {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--white);
+    margin: 0;
+}
+
+.header-bottom-bar {
+    padding: 12px 0;
+}
+
+.social-circle-list {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.social-circle-link {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    color: var(--white);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.88rem;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.social-circle-link:hover {
+    background-color: var(--bright-navy-blue);
+    border-color: var(--bright-navy-blue);
+    color: var(--white);
+}
+
+.tourly-nav-list {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.tourly-nav-link {
+    color: var(--white) !important;
+    font-family: var(--ff-poppins);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.tourly-nav-link:hover,
+.tourly-nav-link.active {
+    color: var(--united-nations-blue) !important;
+}
+
+/* --- PILL BUTTONS --- */
+.btn-tourly-primary,
+.btn-tourly-orange,
+.btn-tourly-turquoise,
+.btn-tourly-navy {
+    background-color: var(--bright-navy-blue);
+    color: var(--white);
+    font-family: var(--ff-poppins);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 11px 28px;
+    border-radius: 100px;
+    border: 2px solid var(--bright-navy-blue);
+    transition: var(--transition);
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-tourly-primary:hover,
+.btn-tourly-orange:hover,
+.btn-tourly-turquoise:hover,
+.btn-tourly-navy:hover {
+    background-color: var(--bright-navy-blue-hover);
+    border-color: var(--bright-navy-blue-hover);
+    color: var(--white);
+    transform: translateY(-2px);
+}
+
+.btn-tourly-outline-white {
+    background-color: transparent;
+    color: var(--white);
+    font-family: var(--ff-poppins);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 11px 28px;
+    border-radius: 100px;
+    border: 2px solid var(--white);
+    transition: var(--transition);
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-tourly-outline-white:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--white);
+}
+
+/* --- HERO SECTION ("JOURNEY TO EXPLORE WORLD") --- */
+.tourly-hero-banner {
+    background: linear-gradient(180deg, rgba(16, 28, 42, 0.65) 0%, rgba(16, 28, 42, 0.68) 100%),
+                url('/static/images/hero-banner.jpg') center/cover no-repeat;
+    min-height: 580px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--white);
+    padding: 95px 15px;
+}
+
+.tourly-hero-banner .hero-title {
+    color: var(--white);
+    font-size: clamp(2.4rem, 5.5vw, 4.4rem);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 20px;
+}
+
+.tourly-hero-banner .hero-text {
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 680px;
+    margin: 0 auto 34px;
+    font-size: 0.96rem;
+    line-height: 1.7;
+}
+
+/* --- BLUE TOUR SEARCH BAR --- */
+.tour-search-section {
+    background-color: var(--bright-navy-blue);
+    padding: 40px 0;
+    color: var(--white);
+}
+
+.tour-search-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 18px;
+    align-items: end;
+}
+
+.tour-search-grid .input-label {
+    display: block;
+    color: var(--white);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+    margin-left: 10px;
+}
+
+.tour-search-grid .input-field {
+    width: 100%;
+    background-color: var(--white);
+    color: var(--oxford-blue);
+    border: none;
+    border-radius: 100px;
+    padding: 13px 20px;
+    font-size: 0.88rem;
+    outline: none;
+}
+
+/* --- SECTION HEADINGS --- */
+.section-subtitle {
+    color: var(--bright-navy-blue);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+}
+
+.section-title {
+    color: var(--oxford-blue);
+    font-size: clamp(1.8rem, 3.5vw, 2.55rem);
+    font-weight: 800;
+    margin-bottom: 14px;
+}
+
+.section-text {
+    color: var(--black-coral);
+    max-width: 620px;
+    margin: 0 auto 45px;
+    font-size: 0.94rem;
+    line-height: 1.65;
+}
+
+/* --- POPULAR DESTINATION CARDS (Rounded Vertical Photo + Floating White Box + Blue Star Pill) --- */
+.popular-dest-card {
+    position: relative;
+    border-radius: var(--radius-25);
+    overflow: hidden;
+    height: 430px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.popular-dest-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.45s ease;
+}
+
+.popular-dest-card:hover img {
+    transform: scale(1.06);
+}
+
+.popular-dest-card .card-content-overlay {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    background-color: var(--white);
+    border-radius: var(--radius-25);
+    padding: 22px 22px 18px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.popular-dest-card .rating-pill {
+    position: absolute;
+    top: -15px;
+    right: 24px;
+    background-color: var(--bright-navy-blue);
+    color: var(--white);
+    padding: 4px 14px;
+    border-radius: 100px;
+    font-size: 0.78rem;
+    display: inline-flex;
+    gap: 3px;
+}
+
+.popular-dest-card .card-subtitle {
+    color: var(--bright-navy-blue);
+    font-size: 0.76rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+}
+
+.popular-dest-card .card-title {
+    color: var(--oxford-blue);
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.popular-dest-card .card-text {
+    color: var(--black-coral);
+    font-size: 0.83rem;
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+
+/* --- POPULAR PACKAGE HORIZONTAL 3-COLUMN CARDS --- */
+.package-horizontal-card {
+    background-color: var(--cultured);
+    border-radius: var(--radius-15);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1.15fr 1.5fr 1fr;
+    margin-bottom: 30px;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 991px) {
+    .package-horizontal-card {
+        grid-template-columns: 1fr;
+    }
+}
+
+.package-horizontal-card .pkg-banner {
+    height: 100%;
+    min-height: 270px;
+}
+
+.package-horizontal-card .pkg-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.package-horizontal-card .pkg-middle {
+    padding: 34px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.package-horizontal-card .pkg-title {
+    font-size: 1.32rem;
+    font-weight: 800;
+    color: var(--oxford-blue);
+    margin-bottom: 12px;
+}
+
+.package-horizontal-card .pkg-desc {
+    font-size: 0.88rem;
+    color: var(--black-coral);
+    line-height: 1.65;
+    margin-bottom: 22px;
+}
+
+.package-horizontal-card .pkg-meta-pill {
+    background-color: var(--white);
+    border-radius: 100px;
+    padding: 9px 20px;
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    width: fit-content;
+    font-size: 0.78rem;
+    color: var(--black-coral);
+}
+
+.package-horizontal-card .pkg-meta-pill i {
+    color: var(--bright-navy-blue);
+    margin-right: 4px;
+}
+
+.package-horizontal-card .pkg-price-box {
+    background-color: var(--united-nations-blue);
+    color: var(--white);
+    padding: 34px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.package-horizontal-card .pkg-price-box .reviews-row {
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+}
+
+.package-horizontal-card .pkg-price-box .price-figure {
+    font-family: var(--ff-montserrat);
+    font-size: 2.55rem;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.package-horizontal-card .pkg-price-box .price-per {
+    font-size: 0.76rem;
+    opacity: 0.9;
+    margin-bottom: 18px;
+}
+
+/* --- PHOTO GALLERY MASONRY GRID --- */
+.gallery-masonry {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 210px;
+    gap: 18px;
+}
+
+.gallery-masonry .gallery-center-tall {
+    grid-column: 2 / 3;
+    grid-row: 1 / 3;
+}
+
+@media (max-width: 767px) {
+    .gallery-masonry {
+        grid-template-columns: 1fr;
+        grid-auto-rows: 220px;
+    }
+    .gallery-masonry .gallery-center-tall {
+        grid-column: auto;
+        grid-row: auto;
+    }
+}
+
+.gallery-masonry .gallery-card {
+    border-radius: var(--radius-25);
+    overflow: hidden;
+    height: 100%;
+}
+
+.gallery-masonry .gallery-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.gallery-masonry .gallery-card:hover img {
+    transform: scale(1.06);
+}
+
+/* --- CALL TO ACTION BLUE BANNER --- */
+.tourly-cta-section {
+    background-color: var(--bright-navy-blue);
+    color: var(--white);
+    padding: 75px 0;
+}
+
+.tourly-cta-section .cta-subtitle {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+}
+
+.tourly-cta-section .cta-title {
+    color: var(--white);
+    font-size: clamp(1.85rem, 3.8vw, 2.75rem);
+    font-weight: 800;
+    margin-bottom: 14px;
+}
+
+/* --- DARK SLATE FOOTER --- */
+.tourly-footer {
+    background-color: var(--gunmetal);
+    color: rgba(255, 255, 255, 0.82);
+    padding-top: 65px;
+}
+
+.tourly-footer .footer-bottom {
+    background-color: var(--oxford-blue);
+    padding: 20px 0;
+    margin-top: 50px;
+    font-size: 0.83rem;
+}
+
+.tourly-footer .newsletter-input {
+    width: 100%;
+    border-radius: 100px;
+    border: none;
+    padding: 13px 22px;
+    font-size: 0.88rem;
+    margin-bottom: 12px;
+}
+
+.tourly-footer .newsletter-btn {
+    width: 100%;
+    border-radius: 100px;
+    border: 2px solid var(--white);
+    background: transparent;
+    color: var(--white);
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 11px 22px;
+    transition: var(--transition);
+}
+
+.tourly-footer .newsletter-btn:hover {
+    background: var(--bright-navy-blue);
+    border-color: var(--bright-navy-blue);
+}
+
+/* --- ADMIN SIGN IN CLEAN CENTERED CARD (Screenshot 6) --- */
+.admin-signin-card {
+    max-width: 440px;
+    margin: 45px auto;
+    background: var(--white);
+    border-radius: 18px;
+    padding: 42px 38px;
+    box-shadow: 0 20px 50px rgba(16, 28, 42, 0.08);
+    border: 1px solid #EEF2F6;
+}
+
+.admin-signin-card .signin-btn {
+    background-color: var(--bright-navy-blue);
+    color: var(--white);
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    width: 100%;
+    transition: var(--transition);
+}
+
+.admin-signin-card .signin-btn:hover {
+    background-color: var(--bright-navy-blue-hover);
+}
+
+/* Legacy helper classes for inner pages */
+.tourly-card {
+    border: none;
+    border-radius: 18px;
+    overflow: hidden;
+    background: var(--white);
+    box-shadow: 0 8px 26px rgba(16, 28, 42, 0.07);
+    transition: var(--transition);
+    height: 100%;
+}
+.tourly-card:hover { transform: translateY(-5px); }
+.tourly-card .card-img-wrapper { position: relative; height: 215px; overflow: hidden; }
+.tourly-card .card-img-top { width: 100%; height: 100%; object-fit: cover; }
+.category-badge { position: absolute; top: 14px; left: 14px; background: var(--bright-navy-blue); color: #fff; font-size: 0.75rem; font-weight: 600; padding: 4px 12px; border-radius: 50px; }
+.price-badge { position: absolute; bottom: 14px; right: 14px; background: var(--oxford-blue); color: #fff; font-weight: 700; padding: 4px 12px; border-radius: 8px; }
+.badge-status-Pending { background-color: #FEF3C7; color: #92400E; border: 1px solid #F59E0B; }
+.badge-status-Confirmed { background-color: #D1FAE5; color: #065F46; border: 1px solid #10B981; }
+.badge-status-Cancelled { background-color: #FEE2E2; color: #991B1B; border: 1px solid #EF4444; }
+.badge-status-Completed { background-color: #E0F2FE; color: #075985; border: 1px solid #3B79C9; }

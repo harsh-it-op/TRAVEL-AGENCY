@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block title %}Book {{ package.package_name }} | Tourly Booking System{% endblock %}
+
+{% block extra_head %}
+<script>
+    window.TOURLY_BASE_PACKAGE_PRICE = {{ package.price|floatformat:2 }};
+    window.TOURLY_PACKAGE_NAME = "{{ package.package_name|escapejs }}";
+</script>
+{% endblock %}
+
+{% block content %}
+<section class="py-4 text-white" style="background-color: #0A2540;">
+    <div class="container">
+        <h1 class="fw-bold mb-1">Travel Booking Request</h1>
+        <p class="text-info mb-0">Complete your booking details below. Validated on both Frontend (JavaScript) and Backend (Django ORM).</p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Left: Booking Form -->
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm p-4">
+                    <h4 class="fw-bold mb-3" style="color: #0A2540;">Traveler &amp; Trip Details</h4>
+
+                    <div id="bookingJsErrors" class="alert alert-danger d-none"></div>
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>Please correct the errors below:</strong>
+                        {{ form.errors }}
+                    </div>
+                    {% endif %}
+
+                    <form id="bookingForm" method="post" action="{% url 'booking' package.id %}" novalidate>
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Selected Destination</label>
+                                <input type="text" class="form-control bg-light" value="{{ package.destination.name }} ({{ package.destination.country }})" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Selected Tour Package</label>
+                                <input type="text" class="form-control bg-light" value="{{ package.package_name }}" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_customer_name" class="form-label small fw-bold">Customer Full Name *</label>
+                                <input type="text" id="id_customer_name" name="customer_name"
+                                       value="{{ form.customer_name.value|default:'' }}" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_customer_email" class="form-label small fw-bold">Email Address *</label>
+                                <input type="email" id="id_customer_email" name="customer_email"
+                                       value="{{ form.customer_email.value|default:'' }}" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_customer_phone" class="form-label small fw-bold">Phone Number *</label>
+                                <input type="text" id="id_customer_phone" name="customer_phone"
+                                       value="{{ form.customer_phone.value|default:'' }}" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_travel_date" class="form-label small fw-bold">Preferred Travel Date *</label>
+                                <input type="date" id="id_travel_date" name="travel_date"
+                                       min="{{ today_iso }}" value="{{ form.travel_date.value|default:today_iso }}"
+                                       class="form-control" required>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="id_travelers" class="form-label small fw-bold">Number of Travelers (1 - 30) *</label>
+                                <div class="input-group">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="adjustTravelerCount(-1)">-</button>
+                                    <input type="number" id="id_travelers" name="travelers"
+                                           value="{{ form.travelers.value|default:2 }}" min="1" max="30"
+                                           class="form-control text-center fw-bold" required>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="adjustTravelerCount(1)">+</button>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label for="id_special_requirements" class="form-label small fw-bold">Special Requirements (Dietary, Room View, Flight Arrival)</label>
+                                <textarea id="id_special_requirements" name="special_requirements" rows="3"
+                                          class="form-control" placeholder="e.g. Vegetarian meals, honeymoon room decoration, airport transfer...">{{ form.special_requirements.value|default:'' }}</textarea>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic JS Total Price Summary Box -->
+                        <div class="p-3 rounded-3 mt-4 d-flex justify-content-between align-items-center"
+                             style="background-color: #F0F9FF; border: 1px solid #00B4D8;">
+                            <div>
+                                <div class="small text-muted">Base Fare: <span id="basePackagePrice" data-price="{{ package.price }}">&#8377;{{ package.price|floatformat:2 }}</span> / traveler</div>
+                                <span class="badge bg-info text-dark mt-1" id="travelerCountBadge">2 Travelers</span>
+                            </div>
+                            <div class="text-end">
+                                <div class="small text-muted">Total Payable Estimate</div>
+                                <div class="fs-3 fw-bolder" style="color: #0A2540;" id="dynamicTotalPrice">&#8377;{{ package.price|floatformat:2 }}</div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-tourly-orange w-100 py-3 mt-4 fs-6">
+                            <i class="bi bi-check2-circle me-1"></i>Confirm &amp; Submit Booking Request
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right: AngularJS Interactive Traveler Roster & Add-On Estimator -->
+            <div class="col-lg-5" ng-controller="TripCalculatorController">
+                <div class="card border-0 shadow-sm p-4 mb-4">
+                    <span class="badge bg-info text-dark mb-2 w-auto align-self-start">AngularJS Interactive Roster</span>
+                    <h5 class="fw-bold" style="color: #0A2540;">Traveler Companion Manifest</h5>
+                    <p class="small text-muted">Manage companion names and meal preferences dynamically using AngularJS two-way data binding.</p>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-5">
+                            <input type="text" class="form-control form-control-sm" ng-model="newTravelerName" placeholder="Traveler Name">
+                        </div>
+                        <div class="col-3">
+                            <input type="number" class="form-control form-control-sm" ng-model="newTravelerAge" placeholder="Age">
+                        </div>
+                        <div class="col-4 d-grid">
+                            <button type="button" class="btn btn-tourly-turquoise btn-sm" ng-click="addTraveler()">+ Add</button>
+                        </div>
+                    </div>
+
+                    <ul class="list-group list-group-flush small mb-3">
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0" ng-repeat="t in travelers">
+                            <div>
+                                <strong>[[ $index + 1 ]]. [[ t.name ]]</strong>
+                                <span class="text-muted ms-1">(Age: [[ t.age ]] • [[ t.mealPref ]])</span>
+                            </div>
+                            <button type="button" class="btn btn-outline-danger btn-sm py-0 px-2" ng-click="removeTraveler($index)">&times;</button>
+                        </li>
+                    </ul>
+
+                    <div class="border-top pt-3 small">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="angAirport" ng-model="addAirportTransfer">
+                            <label class="form-check-label" for="angAirport">Include Private Airport Transfers (+&#8377;1,200/pax)</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="angInsurance" ng-model="addTravelInsurance">
+                            <label class="form-check-label" for="angInsurance">Comprehensive Travel Insurance (+&#8377;850/pax)</label>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                            <span class="fw-bold">AngularJS Custom Estimate ([[ travelers.length ]] pax):</span>
+                            <strong class="text-danger fs-5">&#8377;[[ calculateGrandTotal() | number:0 ]]</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

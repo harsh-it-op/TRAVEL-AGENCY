@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tourly – Journey To Explore World{% endblock %}
+
+{% block content %}
+<!-- 1. HERO SECTION ("JOURNEY TO EXPLORE WORLD" – Screenshot 5) -->
+<section class="tourly-hero-banner" id="home">
+    <div class="container">
+        <h1 class="hero-title">JOURNEY TO<br>EXPLORE WORLD</h1>
+        <p class="hero-text">
+            Ac mi duis mollis. Sapiente? Scelerisque quae, penatibus? Suscipit class corporis nostra rem quos voluptatibus habitant? Fames, vivamus minim nemo enim, gravida lobortis quasi, eum.
+        </p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="#about" class="btn-tourly-primary">LEARN MORE</a>
+            <a href="{% url 'packages' %}" class="btn-tourly-outline-white">BOOK NOW</a>
+        </div>
+    </div>
+</section>
+
+<!-- 2. TOUR SEARCH SECTION (Blue 5-Column Search Bar from index.html) -->
+<section class="tour-search-section">
+    <div class="container">
+        <form action="{% url 'packages' %}" method="get" class="tour-search-grid">
+            <div>
+                <label class="input-label">Search Destination*</label>
+                <input type="text" name="q" placeholder="Enter Destination" class="input-field">
+            </div>
+            <div>
+                <label class="input-label">Pax Number*</label>
+                <input type="number" name="pax" placeholder="No.of People" min="1" class="input-field">
+            </div>
+            <div>
+                <label class="input-label">Checkin Date**</label>
+                <input type="date" name="checkin" class="input-field">
+            </div>
+            <div>
+                <label class="input-label">Checkout Date*</label>
+                <input type="date" name="checkout" class="input-field">
+            </div>
+            <div>
+                <button type="submit" class="btn-tourly-outline-white w-100 py-3">INQUIRE NOW</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- 3. ABOUT US SECTION ("TRAVEL MADE SIMPLE" – Screenshot 4) -->
+<section class="py-5 my-4 text-center" id="about">
+    <div class="container">
+        <p class="section-subtitle">ABOUT US</p>
+        <h2 class="section-title">TRAVEL MADE SIMPLE</h2>
+        <p class="section-text mb-0">
+            Tourly is a travel agency that plans trips end to end: handpicked destinations, fair prices and friendly local guides. Tell us where you want to go and we take care of the rest.
+        </p>
+    </div>
+</section>
+
+<!-- 4. POPULAR DESTINATION SECTION ("UNCOVER PLACE / POPULAR DESTINATION" – Screenshot 3) -->
+<section class="py-5" id="destination">
+    <div class="container text-center">
+        <p class="section-subtitle">UNCOVER PLACE</p>
+        <h2 class="section-title">POPULAR DESTINATION</h2>
+        <p class="section-text">
+            Fusce hic augue velit wisi quibusdam pariatur, iusto primis, nec nemo, rutrum. Vestibulum cumque laudantium. Sit ornare mollitia tenetur, aptent.
+        </p>
+
+        <!-- Featured Trio from Screenshot 3 -->
+        <div class="row g-4 text-start mb-5">
+            <div class="col-md-4">
+                <div class="popular-dest-card">
+                    <img src="{% static 'images/popular-1.jpg' %}" alt="San Miguel, Italy">
+                    <div class="card-content-overlay">
+                        <div class="rating-pill">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                        </div>
+                        <p class="card-subtitle">ITALY</p>
+                        <h3 class="card-title"><a href="{% url 'destinations' %}" class="text-decoration-none text-dark">SAN MIGUEL</a></h3>
+                        <p class="card-text">Fusce hic augue velit wisi ips quibusdam pariatur, iusto.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="popular-dest-card">
+                    <img src="{% static 'images/popular-2.jpg' %}" alt="Burj Khalifa, Dubai">
+                    <div class="card-content-overlay">
+                        <div class="rating-pill">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                        </div>
+                        <p class="card-subtitle">DUBAI</p>
+                        <h3 class="card-title"><a href="{% url 'destinations' %}?q=Dubai" class="text-decoration-none text-dark">BURJ KHALIFA</a></h3>
+                        <p class="card-text">Fusce hic augue velit wisi ips quibusdam pariatur, iusto.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="popular-dest-card">
+                    <img src="{% static 'images/popular-3.jpg' %}" alt="Kyoto Temple, Japan">
+                    <div class="card-content-overlay">
+                        <div class="rating-pill">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                        </div>
+                        <p class="card-subtitle">JAPAN</p>
+                        <h3 class="card-title"><a href="{% url 'destinations' %}" class="text-decoration-none text-dark">KYOTO TEMPLE</a></h3>
+                        <p class="card-text">Fusce hic augue velit wisi ips quibusdam pariatur, iusto.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Database-Driven Popular Destinations Grid (Manali, Goa, Jaipur, Kashmir, Kerala, Shimla, Dubai, Bali) -->
+        <div class="row g-4 text-start mb-4">
+            {% for dest in popular_destinations %}
+            <div class="col-sm-6 col-lg-3">
+                <div class="popular-dest-card" style="height: 360px;">
+                    <img src="{{ dest.image }}" alt="{{ dest.name }}">
+                    <div class="card-content-overlay">
+                        <div class="rating-pill">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                        </div>
+                        <p class="card-subtitle">{{ dest.country }} &bull; {{ dest.category }}</p>
+                        <h3 class="card-title">
+                            <a href="{% url 'destination_detail' dest.id %}" class="text-decoration-none text-dark">{{ dest.name }}</a>
+                        </h3>
+                        <p class="card-text">{{ dest.description|truncatechars:62 }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <a href="{% url 'destinations' %}" class="btn-tourly-primary mt-2">MORE DESTINATION</a>
+    </div>
+</section>
+
+<!-- 5. POPULAR PACKAGES SECTION ("POPULAR PACKEGES / CHECKOUT OUR PACKEGES" – Screenshot 2) -->
+<section class="py-5" id="package">
+    <div class="container text-center">
+        <p class="section-subtitle">POPULAR PACKEGES</p>
+        <h2 class="section-title">CHECKOUT OUR PACKEGES</h2>
+        <p class="section-text">
+            Fusce hic augue velit wisi quibusdam pariatur, iusto primis, nec nemo, rutrum. Vestibulum cumque laudantium. Sit ornare mollitia tenetur, aptent.
+        </p>
+
+        <div class="text-start">
+            {% for pkg in featured_packages|slice:":3" %}
+            <div class="package-horizontal-card">
+                <div class="pkg-banner">
+                    {% if forloop.counter == 1 %}
+                    <img src="{% static 'images/packege-1.jpg' %}" alt="{{ pkg.package_name }}">
+                    {% elif forloop.counter == 2 %}
+                    <img src="{% static 'images/packege-2.jpg' %}" alt="{{ pkg.package_name }}">
+                    {% else %}
+                    <img src="{% static 'images/hero-banner.jpg' %}" alt="{{ pkg.package_name }}">
+                    {% endif %}
+                </div>
+                <div class="pkg-middle">
+                    <h3 class="pkg-title">{{ pkg.package_name }}</h3>
+                    <p class="pkg-desc">{{ pkg.description }}</p>
+                    <div class="pkg-meta-pill">
+                        <span><i class="bi bi-clock-fill"></i> {{ pkg.duration }}</span>
+                        <span>|</span>
+                        <span><i class="bi bi-people-fill"></i> pax: 10</span>
+                        <span>|</span>
+                        <span><i class="bi bi-geo-alt-fill"></i> {{ pkg.destination.name }}</span>
+                    </div>
+                </div>
+                <div class="pkg-price-box">
+                    <div class="reviews-row">
+                        (25 reviews) &nbsp;
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    </div>
+                    <div class="price-figure">&#8377;{{ pkg.price|floatformat:0 }}</div>
+                    <div class="price-per">/ per person</div>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'booking' pkg.id %}" class="btn-tourly-outline-white py-2 px-4">BOOK NOW</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <a href="{% url 'packages' %}" class="btn-tourly-primary mt-3">VIEW ALL PACKAGES</a>
+    </div>
+</section>
+
+<!-- 6. PHOTO GALLERY SECTION ("PHOTO GALLERY / PHOTO'S FROM TRAVELLERS") -->
+<section class="py-5" id="gallery">
+    <div class="container text-center">
+        <p class="section-subtitle">PHOTO GALLERY</p>
+        <h2 class="section-title">PHOTO'S FROM TRAVELLERS</h2>
+        <p class="section-text">
+            Fusce hic augue velit wisi quibusdam pariatur, iusto primis, nec nemo, rutrum. Vestibulum cumque laudantium. Sit ornare mollitia tenetur, aptent.
+        </p>
+
+        <div class="gallery-masonry">
+            <div class="gallery-card"><img src="{% static 'images/popular-1.jpg' %}" alt="Gallery 1"></div>
+            <div class="gallery-card gallery-center-tall"><img src="{% static 'images/popular-2.jpg' %}" alt="Gallery 2"></div>
+            <div class="gallery-card"><img src="{% static 'images/popular-3.jpg' %}" alt="Gallery 3"></div>
+            <div class="gallery-card"><img src="{% static 'images/packege-1.jpg' %}" alt="Gallery 4"></div>
+            <div class="gallery-card"><img src="{% static 'images/packege-2.jpg' %}" alt="Gallery 5"></div>
+        </div>
+    </div>
+</section>
+
+<!-- 7. ANGULARJS INTERACTIVE COMPONENT -->
+<section class="py-5 bg-light" ng-controller="DestinationExplorerController">
+    <div class="container">
+        <div class="card border-0 shadow-sm p-4" style="border-radius: 20px;">
+            <div class="row align-items-center mb-3">
+                <div class="col-lg-8">
+                    <span class="badge bg-primary mb-2">AngularJS 1.8 Dynamic Data-Binding</span>
+                    <h4 class="fw-bold mb-1">Interactive Destination Filter &amp; Group Cost Estimator</h4>
+                    <p class="text-muted small mb-0">Filter destinations and estimate multi-traveler costs in real time.</p>
+                </div>
+                <div class="col-lg-4 mt-3 mt-lg-0 d-flex align-items-center justify-content-lg-end gap-2">
+                    <label class="small fw-bold">Travelers:</label>
+                    <input type="number" class="form-control form-control-sm w-25 rounded-pill text-center" ng-model="travelersCount" min="1" max="20">
+                </div>
+            </div>
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <input type="text" class="form-control rounded-pill px-3" ng-model="searchKeyword" placeholder="Search destination (Manali, Goa, Kashmir, Dubai)...">
+                </div>
+                <div class="col-md-6">
+                    <select class="form-select rounded-pill px-3" ng-model="selectedCategory">
+                        <option value="">All 6 Categories</option>
+                        <option ng-repeat="cat in categories" value="[[ cat ]]">[[ cat ]]</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6 col-lg-3" ng-repeat="d in destinations | filter:FilterDestination">
+                    <div class="p-3 border rounded-4 bg-white h-100 d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <strong style="color:#1E2C3A;">[[ d.name ]]</strong>
+                                <span class="badge bg-primary">[[ d.category ]]</span>
+                            </div>
+                            <p class="small text-muted mb-2">[[ d.description ]]</p>
+                        </div>
+                        <div class="border-top pt-2 d-flex justify-content-between align-items-center">
+                            <span class="small text-muted">[[ travelersCount ]] Pax Est.:</span>
+                            <strong style="color:#3B79C9;">&#8377;[[ (d.baseCost * travelersCount) | number:0 ]]</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 8. CALL TO ACTION BLUE BANNER (Matches Screenshot 1) -->
+<section class="tourly-cta-section">
+    <div class="container d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-4">
+        <div style="max-width: 680px;">
+            <p class="cta-subtitle">CALL TO ACTION</p>
+            <h2 class="cta-title">READY FOR UNFORGATABLE TRAVEL. REMEMBER US!</h2>
+            <p class="mb-0 opacity-90 small">
+                Fusce hic augue velit wisi quibusdam pariatur, iusto primis, nec nemo, rutrum. Vestibulum cumque laudantium. Sit ornare mollitia tenetur, aptent.
+            </p>
+        </div>
+        <div>
+            <a href="{% url 'contact' %}" class="btn-tourly-outline-white">CONTACT US !</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
